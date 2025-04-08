@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer, TeamSerializer, ActivitySerializer, LeaderboardSerializer, WorkoutSerializer
 from .models import User, Team, Activity, Leaderboard, Workout
 
+
 @api_view(['GET'])
 def api_root(request, format=None):
     base_url = request.build_absolute_uri('/')
@@ -15,6 +16,8 @@ def api_root(request, format=None):
         'workouts': base_url + 'api/workouts/',
     })
 
+
+# The following code defines the viewsets for the models in the application.
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
