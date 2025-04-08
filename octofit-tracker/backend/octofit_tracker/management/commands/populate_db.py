@@ -1,25 +1,30 @@
 from django.core.management.base import BaseCommand
+from django.conf import settings
+from pymongo import MongoClient
 from octofit_tracker.models import User, Team, Activity, Leaderboard, Workout
 from datetime import timedelta
+from bson import ObjectId
 
 class Command(BaseCommand):
     help = 'Populate the database with test data for users, teams, activities, leaderboard, and workouts'
 
     def handle(self, *args, **kwargs):
-        # Clear existing data
-        User.objects.all().delete()
-        Team.objects.all().delete()
-        Activity.objects.all().delete()
-        Leaderboard.objects.all().delete()
-        Workout.objects.all().delete()
+        # Connect to MongoDB and drop collections directly
+        client = MongoClient(settings.DATABASES['default']['HOST'], settings.DATABASES['default']['PORT'])
+        db = client[settings.DATABASES['default']['NAME']]
+        db.users.drop()
+        db.teams.drop()
+        db.activity.drop()
+        db.leaderboard.drop()
+        db.workouts.drop()
 
         # Create users
         users = [
-            User(username='thundergod', email='thundergod@mhigh.edu', password='thundergodpassword'),
-            User(username='metalgeek', email='metalgeek@mhigh.edu', password='metalgeekpassword'),
-            User(username='zerocool', email='zerocool@mhigh.edu', password='zerocoolpassword'),
-            User(username='crashoverride', email='crashoverride@hmhigh.edu', password='crashoverridepassword'),
-            User(username='sleeptoken', email='sleeptoken@mhigh.edu', password='sleeptokenpassword'),
+            User(_id=ObjectId(), username='thundergod', email='thundergod@mhigh.edu', password='thundergodpassword'),
+            User(_id=ObjectId(), username='metalgeek', email='metalgeek@mhigh.edu', password='metalgeekpassword'),
+            User(_id=ObjectId(), username='zerocool', email='zerocool@mhigh.edu', password='zerocoolpassword'),
+            User(_id=ObjectId(), username='crashoverride', email='crashoverride@hmhigh.edu', password='crashoverridepassword'),
+            User(_id=ObjectId(), username='sleeptoken', email='sleeptoken@mhigh.edu', password='sleeptokenpassword'),
         ]
         User.objects.bulk_create(users)
 
